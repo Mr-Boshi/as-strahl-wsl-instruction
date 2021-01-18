@@ -1,4 +1,4 @@
-## Подготовка ##
+## Подготовка системы
 1. Обновить Windows 10 до версии 1903 или выше (для проверки: нажать `Win+R`, ввести `winver`)
 2. Установить из Microsoft Store бесплатный Windows Terminal (или Windows Terminal Preview)
 3. Купить в Microsoft Store и установить X Server X410 (или скачать и установить бесплатный X Server VcXsrv)
