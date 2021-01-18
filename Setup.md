@@ -1,6 +1,51 @@
 Гайд по установке ASTRA на Window 10
-====================================
-## Установка Ubuntu ##
+============
+
+## Подготовка
+1. Обновить Windows 10 до версии 1903 или выше (для проверки: нажать `Win+R`, ввести `winver`)
+2. Установить из Microsoft Store бесплатный Windows Terminal (или Windows Terminal Preview)
+3. Купить в Microsoft Store и установить X Server X410 (или скачать и установить бесплатный X Server VcXsrv)
+4. Скачать автономный установщик Ubuntu [отсюда](https://docs.microsoft.com/en-us/windows/wsl/install-manual) (раздел *Downloading distributions*), распаковываем полученный файл с помощью архиватора (7-zip, например). По желанию переименовываем во что-то более приемлемое, например Ubuntu-20.04 и копируем его в каталог C:\wsl (в качестве примера).
+5. **Опционально:** если нужно принимать звуковые сигналы из виртуальной машины, то скачиваем [отсюда](https://wikiprograms.org/pulseaudio/) кроссплатформенный звуковой сервер PulseAudio v.1.1. Распаковываем в `C:\wsl` и вносим исправления в его конфигурационные файлы.
+	<details>
+		<summary>Настройка PulseAudio</summary>
+		В файле \wsl\pulseaudio-1.1\etc\pulse\default.pa в разделе Load audio drivers statically редактируем строку:
+		<pre>
+		load-module module-waveout sink_name=output source_name=input record=0
+		</pre>
+		а в разделе Network access редактируем строку:
+		<pre>
+		load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1
+		</pre>
+		В файле \wsl\pulseaudio-1.1\etc\pulse\daemon.conf раскомментируем и изменяем строку
+		<pre>
+		exit-idle-time = -1
+		</pre>
+	</details>
+
+[Источник](https://habr.com/ru/post/522726/)
+
+## Включение WSL 2
+1. Открыть Windows Terminal **от администратора**. В нем по умолчанию новая вкладка -- терминал PowerShell. Если нет -- открыть терминал PowerShell в новой вкладке.
+2. Выполнить
+
+		dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+	для включения подсистемы WSL.
+3. Выполнить
+
+		dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+	для включения компонента Платформы виртуальных машин.
+4. Перезагрузить компьютер.
+5. Скачать [отсюда](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi) и установить Пакет обновления ядра Linux в WSL 2 для 64-разрядных компьютеров.
+6. Открыть Windows Terminal **от администратора**. Открыть PowerShell в новой вкладке (если необходимо).
+7. Выполнить
+
+		wsl --set-default-version 2
+	для настройки WSL2 в качестве версии по умолчанию.
+
+[Источник](https://docs.microsoft.com/ru-ru/windows/wsl/install-win10)
+
+## Установка Ubuntu
 1. Открыть Windows Terminal.
 2. Перейти в каталог с распакованным установщиком Ubuntu выполнив
 
@@ -18,7 +63,7 @@
 
 [Источник](https://habr.com/ru/post/522726/)
 
-## Настройка Ubuntu ##
+## Настройка Ubuntu
 1. Если повторно запустить Windows Terminal, то для новой вкладки появится новый вариант с названием виртуальной машины, которую мы установили на предыдущем шаге (Ubuntu-20.04 в нашем примере). Нажав на него мы запускаем виртуальную машину с  открываем терминал Ubuntu. В нем можно выполнять почти все команды Linux.
 2. В открытом терминале Ubuntu вводим
 
