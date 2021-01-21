@@ -4,6 +4,7 @@
 2. Перейти в каталог с распакованным установщиком Ubuntu выполнив
 
 		cd C:\wsl\Ubuntu-20.04
+
 	(согласно нашему примеру).
 3. Запустить установку введя название исполняемого файла. В нашем примере это `ubuntu2004.exe`:
 
@@ -12,6 +13,7 @@
 5. Для проверки корректности можно открыть в Windows Terminal новую вкладку и ввести там
 
 		wsl -l -v
+
 	Должна появиться наша Ubuntu. В столбце STATE указано состояние виртуальной машины (`RUNNING` или `STOPPED`) В столбце `VERSION` должно быть указано `2`.
 6. Отключить Microsoft Defender для активной сети. Вроде это нужно, чтоб виртуальная машина могла безпрепятственно связываться с интернетом, но вроде это не обязательно.
 
@@ -22,6 +24,7 @@
 2. В открытом терминале Ubuntu вводим
 
 		sudo apt update && sudo apt upgrade
+
 	для обновления системы. Потребуется ввести пароль пользователя и подтвердить обновление введя `y`.
 3. Вводим
 
@@ -35,18 +38,22 @@
 		sudo apt install hunspell-ru mueller7-dict
 		sudo update-locale LANG=ru_RU.UTF-8
 		sudo dpkg-reconfigure locales
+
 	(примечание: в списке Locales to be generated выбираем **ru_RU.UTF-8 UTF-8**, а в списке Default locale for the system enviroment -- **ru_RU.UTF-8** или другую на свой выбор)
 
 		sudo apt-get install --reinstall locales
+
 	Потребуется ввести пароль пользователя и подтвердить обновление введя `y`.
 5. Выполняем
 
 		sudo add-apt-repository ppa:kubuntu-ppa/backports
 		sudo apt update && sudo apt full-upgrade
+
 	для добавления репозитория с KDA и обновления до последней версии.
 6. Открываем wsl.conf для редактирования
 
 		sudo nano /etc/wsl.conf
+
 	и вставляем в него
 
 		[automount]
@@ -60,6 +67,7 @@
 		[interop]
 		enabled = true
 		appendWindowsPath = true
+
 	сохраняем изменения (`Ctrl+O` -- буква, а не цифра), подтверждаем операцию и выходим из текстового редактора (`Ctrl+X`).
 
 7. Заранее поставим пакеты необходимые в дальнейшем. Выполняем
@@ -75,6 +83,7 @@
 8. Создаем ярлыки для запуска Ubuntu с графическим интерфейсом Для этого образ системы экспортируется командой, выполненной в PowerShell
 
 		wsl --export Ubuntu-20.04 c:\wsl\Ubuntu-plasma-desktop
+
 	Затем создается .bat-файл со следующим содержимым:
 
 		@echo off
@@ -92,6 +101,7 @@
 		taskkill.exe /F /T /IM x410.exe > nul
 		rem taskkill.exe /F /IM pulseaudio.exe > nul
 		rem pause > nul
+
 	Файл называем, например `Start-Ubuntu-20.04-plasma-desktop.bat`
 
 	Для запуска графического терминала Ubutntu без рабочего стола содержимое файла будет отличаться:
@@ -111,6 +121,7 @@
 		rem taskkill.exe /F /T /IM vcxsrv.exe > nul
 		rem taskkill.exe /F /IM pulseaudio.exe > nul
 		rem pause > nul
+
 	Можно создать для этого отдельный файл и назвать его, например `Start-Ubuntu-20.04-terminal.bat`
 
 	Как сказано в самих батниках, при использовании `VcXsrv` вместо `x410`, необходимо в файле Start-Ubuntu-20.04-plasma-desktop.bat раскомментировать строки, содержащие "config.xlaunch" и "vcxsrv.exe", и закомментировать все строки, содержащие "x410" (8-9 и 12-13 строки).
