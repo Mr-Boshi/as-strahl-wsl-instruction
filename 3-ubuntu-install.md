@@ -79,6 +79,7 @@
 		sudo apt-get install csh
 		sudo apt-get install tcsh
 		sudo apt-get install libx11-dev
+		sudo apt-get install m4
 
 8. Создаем ярлыки для запуска Ubuntu с графическим интерфейсом Для этого образ системы экспортируется командой, выполненной в PowerShell
 
