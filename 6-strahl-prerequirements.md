@@ -4,7 +4,7 @@
 
 <img src="https://docs.unidata.ucar.edu/netcdf-c/current/deptree.jpg" alt="NetCDF dependencies" width="300"/>
 
-Поэтому перед установкой Strahl необходимо скомпилировать нескроткр библиотек: `ZLib`, `hdf5` и `netcdf`. Это необходимо делать под суперпользователем, поэтому сразу перейдем в этот режим и заодно укажем окружению суперпользователя путь к компилятору Fortran:
+Поэтому перед установкой Strahl необходимо скомпилировать несколько библиотек: `ZLib`, `hdf5` и `netcdf`. Это необходимо делать под суперпользователем, поэтому сразу перейдем в этот режим и заодно укажем окружению суперпользователя путь к компилятору Fortran:
 
 ```sh
 sudo su
@@ -45,7 +45,7 @@ wget http://www.zlib.net/zlib-1.2.11.tar.gz
 	```sh
 	tar -xf hdf5-1.13.0.tar.gz
 	```
-3. Перейти в папку с содержимым архива (`cd hdf5-1.13.0`) и создать в ней скрипт с настройками конфигурации:
+3. Перейти в папку с содержимым архива и создать в ней скрипт с настройками конфигурации:
 	```sh
 	cd hdf5-1.13.0
 	nano config-intel.sh
@@ -99,7 +99,7 @@ wget http://www.zlib.net/zlib-1.2.11.tar.gz
 	```
 
 4. . Вставить в файл следующий текст:
-   	```sh
+	```sh
 	export CC=icc
 	export CXX=icpc
 	export CFLAGS='-O3 -xHost -ip -no-prec-div -static-intel -I/usr/local/hdf5_intel/include'
@@ -115,7 +115,9 @@ wget http://www.zlib.net/zlib-1.2.11.tar.gz
 
 	./configure --prefix=/usr/local/netcdf_intel --disable-dap --with-zlib=/usr/local/zlib --disable-hdf4 --enable-fortran
 	```
- 	Запускаем скрипт:
+ 	
+	Запускаем скрипт:
+
 	```sh
 	chmod a+x config-intel.sh
 	./config-intel.sh
@@ -180,7 +182,7 @@ wget http://www.zlib.net/zlib-1.2.11.tar.gz
 	chmod a+x config-intel.sh
 	./config-intel.sh
 	```
-5. Устанавливаем скомпилированный netcdf-c:
+5. Устанавливаем скомпилированный netcdf-fortran:
 
 	```sh
 	make
