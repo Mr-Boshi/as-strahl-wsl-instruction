@@ -86,14 +86,15 @@
 7. Заранее поставим пакеты необходимые в дальнейшем. Выполняем
 
    ```sh
-   sudo apt-get install build-essential
-   sudo apt-get install gcc-multilib
-   sudo apt-get install rpm
-   sudo apt-get install openjdk-8-jre-headless
-   sudo apt-get install csh
-   sudo apt-get install tcsh
-   sudo apt-get install libx11-dev
-   sudo apt-get install m4
+   sudo apt install build-essential
+   sudo apt install gcc-multilib
+   sudo apt install rpm
+   sudo apt install openjdk-8-jre-headless
+   sudo apt install csh
+   sudo apt install tcsh
+   sudo apt install libx11-dev
+   sudo apt install m4
+   sudo apt install libnetcdff-dev
    ```
 
 8. Создаем ярлыки для запуска Ubuntu с графическим интерфейсом Для этого образ системы экспортируется командой, выполненной в PowerShell
