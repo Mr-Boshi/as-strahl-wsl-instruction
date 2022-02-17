@@ -3,16 +3,23 @@
 1. Открыть Windows Terminal.
 2. Перейти в каталог с распакованным установщиком Ubuntu выполнив
 
+	```powershell
 		cd C:\wsl\Ubuntu-20.04
+	```
 
 	(согласно нашему примеру).
 3. Запустить установку введя название исполняемого файла. В нашем примере это `ubuntu2004.exe`:
+   
+	```powershell
+	.\ubuntu2004.exe
+	```
 
-		.\ubuntu2004.exe
 4. По окончании установки Ubuntu в консоли появится запрос на создание нового пользователя. Нужно ввести имя нового пользователя и его пароль для Ubuntu (могут быть любыми).
 5. Для проверки корректности можно открыть в Windows Terminal новую вкладку и ввести там
 
-		wsl -l -v
+	```powershell
+	wsl -l -v
+	```
 
 	Должна появиться наша Ubuntu. В столбце STATE указано состояние виртуальной машины (`RUNNING` или `STOPPED`) В столбце `VERSION` должно быть указано `2`.
 6. Отключить Microsoft Defender для активной сети. Вроде это нужно, чтоб виртуальная машина могла безпрепятственно связываться с интернетом, но вроде это не обязательно.
@@ -97,62 +104,72 @@
    sudo apt install libnetcdff-dev
    ```
 
-8. Создаем ярлыки для запуска Ubuntu с графическим интерфейсом Для этого образ системы экспортируется командой, выполненной в PowerShell
+8. Для Windows 10 необходимо создать ярлыки для запуска Ubuntu с графическим интерфейсом. Для этого создается .bat-файл со следующим содержимым:
 
-   ```powershell
-   wsl --export Ubuntu-20.04 c:\wsl\Ubuntu-plasma-desktop
-   ```
+	```batch
+	@echo off
+	echo ===================================== Внимание! ============================================
+	echo  Для корректной работы GUI Ubuntu 20.04 в WSL2 необходимо использовать X Server.
+	echo  Примечание: в случае использования VcXsrv Windows X Server необходимо раскомментировать
+	echo  строки в файле Start-Ubuntu-20.04-plasma-desktop.bat, содержащие "config.xlaunch" и
+	echo  "vcxsrv.exe", и закомментировать все строки, содержащие "x410".
+	echo ============================================================================================
+	rem start "" /B "c:\wsl\vcxsrv\config.xlaunch" > nul
+	start "" /B x410.exe /wm /public > nul
+	rem start "" /B "c:\wsl\pulseaudio-1.1\bin\pulseaudio.exe" --use-pid-file=false -D > nul
+	c:\wsl\Ubuntu-20.04\Ubuntu2004.exe run "if [ -z \"$(pidof plasmashell)\" ]; then cd ~ ; export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0 ; setxkbmap us,ru -option grp:ctrl_shift_toggle ; export LIBGL_ALWAYS_INDIRECT=1 ; export PULSE_SERVER=tcp:$(grep nameserver /etc/resolv.conf | awk '{print $2}') ; sudo /etc/init.d/dbus start &> /dev/null ; sudo service ssh start ; sudo service xrdp start ; plasmashell ; pkill '(gpg|ssh)-agent' ; fi;"
+	rem taskkill.exe /F /T /IM vcxsrv.exe > nul
+	taskkill.exe /F /T /IM x410.exe > nul
+	rem taskkill.exe /F /IM pulseaudio.exe > nul
+	rem pause > nul
+	```
 
-   Затем создается .bat-файл со следующим содержимым:
+	Файл называем, например `Start-Ubuntu-20.04-plasma-desktop.bat`. Сохраняем его на рабочем столе и используем для запуска Ubuntu с KDE Plasma Desktop
 
-   	@echo off
-   	echo ===================================== Внимание! ============================================
-   	echo  Для корректной работы GUI Ubuntu 20.04 в WSL2 необходимо использовать X Server.
-   	echo  Примечание: в случае использования VcXsrv Windows X Server необходимо раскомментировать
-   	echo  строки в файле Start-Ubuntu-20.04-plasma-desktop.bat, содержащие "config.xlaunch" и
-   	echo  "vcxsrv.exe", и закомментировать все строки, содержащие "x410".
-   	echo ============================================================================================
-   	rem start "" /B "c:\wsl\vcxsrv\config.xlaunch" > nul
-   	start "" /B x410.exe /wm /public > nul
-   	rem start "" /B "c:\wsl\pulseaudio-1.1\bin\pulseaudio.exe" --use-pid-file=false -D > nul
-   	c:\wsl\Ubuntu-20.04\Ubuntu2004.exe run "if [ -z \"$(pidof plasmashell)\" ]; then cd ~ ; export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0 ; setxkbmap us,ru -option grp:ctrl_shift_toggle ; export LIBGL_ALWAYS_INDIRECT=1 ; export PULSE_SERVER=tcp:$(grep nameserver /etc/resolv.conf | awk '{print $2}') ; sudo /etc/init.d/dbus start &> /dev/null ; sudo service ssh start ; sudo service xrdp start ; plasmashell ; pkill '(gpg|ssh)-agent' ; fi;"
-   	rem taskkill.exe /F /T /IM vcxsrv.exe > nul
-   	taskkill.exe /F /T /IM x410.exe > nul
-   	rem taskkill.exe /F /IM pulseaudio.exe > nul
-   	rem pause > nul
+	Скрипт для запуска графического терминала Ubutntu без рабочего стола будет отличаться:
 
-   Файл называем, например `Start-Ubuntu-20.04-plasma-desktop.bat`
+	```batch
+	@echo off
+	echo ===================================== Внимание! ============================================
+	echo  Для корректной работы GUI Ubuntu 20.04 в WSL2 необходимо использовать X Server.
+	echo  Примечание: в случае использования VcXsrv Windows X Server необходимо раскомментировать
+	echo  строки в файле Start-Ubuntu-20.04-plasma-desktop.bat, содержащие "config.xlaunch" и
+	echo  "vcxsrv.exe", и закомментировать все строки, содержащие "x410".
+	echo ============================================================================================
+	rem start "" /B "c:\wsl\vcxsrv\config.xlaunch" > nul
+	start "" /B x410.exe /wm /public > nul
+	rem start "" /B "c:\wsl\pulseaudio-1.1\bin\pulseaudio.exe" --use-pid-file=false -D > nul
+	c:\wsl\Ubuntu-20.04\Ubuntu2004.exe run "cd ~ ; export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0 ; export LIBGL_ALWAYS_INDIRECT=1 ; setxkbmap us,ru -option grp:ctrl_shift_toggle ; export PULSE_SERVER=tcp:$(grep nameserver /etc/resolv.conf | awk '{print $2}') ; sudo /etc/init.d/dbus start &> /dev/null ; sudo service ssh start ; sudo service xrdp start ; konsole ; pkill '(gpg|ssh)-agent' ;"
+	taskkill.exe /F /T /IM x410.exe > nul
+	rem taskkill.exe /F /T /IM vcxsrv.exe > nul
+	rem taskkill.exe /F /IM pulseaudio.exe > nul
+	rem pause > nul
+	```
 
-   Для запуска графического терминала Ubutntu без рабочего стола содержимое файла будет отличаться:
+	Можно создать для этого отдельный файл и назвать его, например `Start-Ubuntu-20.04-terminal.bat`
 
-   	@echo off
-   	echo ===================================== Внимание! ============================================
-   	echo  Для корректной работы GUI Ubuntu 20.04 в WSL2 необходимо использовать X Server.
-   	echo  Примечание: в случае использования VcXsrv Windows X Server необходимо раскомментировать
-   	echo  строки в файле Start-Ubuntu-20.04-plasma-desktop.bat, содержащие "config.xlaunch" и
-   	echo  "vcxsrv.exe", и закомментировать все строки, содержащие "x410".
-   	echo ============================================================================================
-   	rem start "" /B "c:\wsl\vcxsrv\config.xlaunch" > nul
-   	start "" /B x410.exe /wm /public > nul
-   	rem start "" /B "c:\wsl\pulseaudio-1.1\bin\pulseaudio.exe" --use-pid-file=false -D > nul
-   	c:\wsl\Ubuntu-20.04\Ubuntu2004.exe run "cd ~ ; export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0 ; export LIBGL_ALWAYS_INDIRECT=1 ; setxkbmap us,ru -option grp:ctrl_shift_toggle ; export PULSE_SERVER=tcp:$(grep nameserver /etc/resolv.conf | awk '{print $2}') ; sudo /etc/init.d/dbus start &> /dev/null ; sudo service ssh start ; sudo service xrdp start ; konsole ; pkill '(gpg|ssh)-agent' ;"
-   	taskkill.exe /F /T /IM x410.exe > nul
-   	rem taskkill.exe /F /T /IM vcxsrv.exe > nul
-   	rem taskkill.exe /F /IM pulseaudio.exe > nul
-   	rem pause > nul
-
-   Можно создать для этого отдельный файл и назвать его, например `Start-Ubuntu-20.04-terminal.bat`
-
-   Как сказано в самих батниках, при использовании `VcXsrv` вместо `x410`, необходимо в файле Start-Ubuntu-20.04-plasma-desktop.bat раскомментировать строки, содержащие "config.xlaunch" и "vcxsrv.exe", и закомментировать все строки, содержащие "x410" (8-9 и 12-13 строки).
-
+   Как сказано в самих батниках, при использовании `VcXsrv` вместо `x410`, необходимо в файле `Start-Ubuntu-20.04-plasma-desktop.bat` раскомментировать строки, содержащие `config.xlaunch` и `vcxsrv.exe`, и закомментировать все строки, содержащие `x410` (8-9 и 12-13 строки).
    Если окно командной строки появляется и сразу исчесзает раскомментируйте последнюю строку. Таким образом можно посмотреть что за ошибку выдает скрипт.
-
    Если нужен PulseAudio, то раскомментируйте 10 и 14 строки.
 
-9. **Опционально:** в источнике можно посмотреть как установленную\настроенную систему можно экспортировать и затем заново развернуть на другой машине с помощью других .bat-файлов.
+   Для Windows 11 файл для запуска графического интерфейса WSL-систем не нужны дополнительные скрипты: в меню Пуск появится папка Ubuntu с ярлыками для запуска всех приложений, установленных на виртуальную машину. Таким образом, файловый менеджер и терминал можно запустить прямо оттуда.
+
+   Проверить запущеные WSL-системы можно в Windows Terminal командой `wsl -l -v`, завершить работу всех виртуальных машин командой `wsl --shutdown`, выключить конкретную виртуальную машину можно командой `wsl -t %distrib_name%`.
+
+9. **Опционально:** в источнике можно посмотреть как установленную\настроенную систему можно экспортировать и затем заново развернуть на другой машине с помощью команд командной строки и других .bat-файлов.
+	<details>
+		<summary>Export WSL Ubuntu-20.04</summary>
+		<pre>
+	Выполнить в командной строке Windows:
+	```powershell	
+	wsl --export Ubuntu-20.04 c:\wsl\Ubuntu-plasma-desktop
+	```
+		</pre>
+	</details>
 	<details>
 		<summary>Install-Ubuntu-20.04-plasma-desktop.bat</summary>
 		<pre>
+	```batch	
 	@echo off
 	wsl --set-default-version 2
 	cls
@@ -164,11 +181,13 @@
 	echo Не забудьте сменить учетную запись по умолчанию «root» на существующую учетную запись пользователя,
 	echo либо используйте предустановленную учетную запись «engineer», пароль: «password».
 	pause
+	```
 		</pre>
 	</details>
 	<details>
 		<summary>Reinstall-Ubuntu-20.04-plasma-desktop.bat</summary>
 		<pre>
+	```batch
 	@echo off
 	wsl --unregister Ubuntu-20.04
 	wsl --set-default-version 2
@@ -179,17 +198,20 @@
 	cls
 	echo Дистрибутив Ubuntu-20.04 успешно переустановлен!
 	pause
+	```
 		</pre>
 	</details>
 	<details>
 		<summary>Set-default-user.bat</summary>
 		<pre>
+	```batch
 	@echo off
 	set /p answer=Введите существующую учетную запись в Ubuntu (engineer):
 	c:\wsl\Ubuntu-20.04\ubuntu2004.exe config --default-user %answer%
 	cls
 	echo Учетная запись пользователя %answer% в Ubuntu-20.04 установлена по умолчанию!
 	pause
+	```
 		</pre>
 	</details>
 
